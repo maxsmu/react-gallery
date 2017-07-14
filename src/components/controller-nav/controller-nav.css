@@ -1,0 +1,80 @@
+/* controller -- start */
+.controller-nav {
+    position: relative;
+    z-index: 101;
+    bottom: 60px;
+    left: 0;
+
+    width: 100%;
+
+    text-align: center;
+
+            perspective: 1800px;
+    -webkit-perspective: 1800px;
+       -moz-perspective: 1800px;
+        -ms-perspective: 1800px;
+}
+/* controller -- end */
+
+.controller-nav .controller-unit {
+    display: inline-block;
+
+    width: 30px;
+    height: 30px;
+    margin: 0 5px;
+
+    cursor: pointer;
+    -webkit-transition: transform .2s ease-in-out,left .6s ease-in-out;
+       -moz-transition: transform .2s ease-in-out,left .6s ease-in-out;
+            transition: transform .2s ease-in-out,left .6s ease-in-out;
+    -webkit-transform: scale(.5);
+       -moz-transform: scale(.5);
+        -ms-transform: scale(.5);
+            transform: scale(.5);
+    -webkit-transform-origin: 0 50% 0;
+       -moz-transform-origin: 0 50% 0;
+        -ms-transform-origin: 0 50% 0;
+            transform-origin: 0 50% 0;
+    text-align: center;
+    vertical-align: middle;
+
+    border-radius: 50%;
+    background-color: #aaa;
+
+            transform-style: preserve-3d;
+    -webkit-transform-style: preserve-3d;
+}
+.controller-nav .controller-unit.is-center {
+    -webkit-transform: scale(1) translateX(-5px);
+       -moz-transform: scale(1) translateX(-5px);
+        -ms-transform: scale(1) translateX(-5px);
+            transform: scale(1) translateX(-5px);
+
+    background-color: #888;
+}
+.controller-nav .controller-unit.is-center.icon-picRight, .controller-nav .controller-unit.is-center.icon-picLeft {
+    font-size: 110%;
+    line-height: 30px;
+
+    color: #fff;
+}
+
+.controller-nav .controller-unit.is-center.icon-picLeft {
+    -webkit-transform: translateX(25px) rotateY(180deg);
+       -moz-transform: translateX(25px) rotateY(180deg);
+        -ms-transform: translateX(25px) rotateY(180deg);
+            transform: translateX(25px) rotateY(180deg);
+}
+
+.controller-nav .controller-unit.is-center.is-inverse {
+    -webkit-transform: translateX(-5px) rotateY(0deg);
+       -moz-transform: translateX(-5px) rotateY(0deg);
+        -ms-transform: translateX(-5px) rotateY(0deg);
+            transform: translateX(-5px) rotateY(0deg);
+}
+.controller-unit:hover {
+    -webkit-transform: scale(.8);
+       -moz-transform: scale(.8);
+        -ms-transform: scale(.8);
+            transform: scale(.8);
+}
