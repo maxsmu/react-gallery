@@ -1,0 +1,1 @@
+export { ImgFigure } from './img-figure.jsx'

@@ -32,7 +32,7 @@ export default class App extends Component {
     imgsArrangeArr: [
       // {
       //   pos: {
-      //     left: 0,
+      //     left: 0, // 定位
       //     top: 0,
       //     rotate:0, // 旋转角度
       //     isInverse:false,  // 图片正反面
