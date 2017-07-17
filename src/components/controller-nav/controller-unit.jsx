@@ -18,25 +18,23 @@ export class ControllerUnit extends Component {
 	 * @param {Event} e 
 	 */
 	onHandleClik = e => {
-		if (this.props.arrange.isCenter) {
-			this.props.inverse()
-			this.setState({
-				isInverse: !this.state.isInverse
-			})
+		if (this.props.image.area==='center') {
+			this.props.onInverse()
+			 
 		} else {
-			this.props.center()
+			this.props.onCenter()
 		}
 		e.preventDefault()
 		e.stopPropagation()
 	}
 	render() {
-		const { arrange } = this.props
+		const { image } = this.props
 
 		// 样式名称
 		let className = 'controller-unit'
 
-		if (arrange.isCenter) {
-			className = `${className} is-center iconfont icon-picLeft ${arrange.isInverse ? ' is-inverse' : ''}`
+		if (image.area==='center') {
+			className = `${className} is-center iconfont icon-picLeft ${image.isInverse ? ' is-inverse' : ''}`
 		}
 
 		return (

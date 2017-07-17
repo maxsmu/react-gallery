@@ -38,24 +38,12 @@ export class ImgFigure extends Component {
 	 * imgFigure 的点击处理函数
 	 * @param {Event} e 
 	 */
-	onInverse = e => {
-		let isInverse = this.state.arrange.isInverse
-
+	onHandleClick = e => {
 		if (this.state.arrange.isCenter) {
-			// isInverse = !isInverse
+			this.props.onInverse()
 		} else {
-			// this.props.center()
+			this.props.onCenter()
 		}
-
-		this.setState({
-			arrange: {
-				...this.state.arrange,
-				isInverse
-			}
-		})
-		const { pos, rotate, isCenter } = this.state.arrange
-
-		console.log(pos, rotate, isCenter, isInverse);
 		e.preventDefault()
 		e.stopPropagation()
 	}
@@ -80,12 +68,12 @@ export class ImgFigure extends Component {
 	*/
 	genArrange(img) {
 		const { centerPos, vPosRange, hPosRange } = this.Contant
-
+		let arrange
 		switch (img.area) {
 			case 'top':
 
 				// 布局位于上侧的图片
-				return {
+				arrange = {
 					rotate: this.get30Degrandom(),
 					pos: {
 						top: this.getRangeRandom(vPosRange.topY[0], vPosRange.topY[1]),
@@ -94,19 +82,21 @@ export class ImgFigure extends Component {
 					isCenter: false,
 					isInverse: false
 				}
+				break
 			case 'center':
 
 				// 首先居中 centerIndex 的图片
 				// 居中的图片不需要旋转
 				// 设置居中图片标记
-				return {
+				arrange = {
 					pos: centerPos,
 					rotate: 0,
 					isCenter: true,
-					isInverse: false
+					isInverse: img.isInverse
 				}
+				break
 			case 'left':
-				return {
+				arrange = {
 					rotate: this.get30Degrandom(),
 					pos: {
 						top: this.getRangeRandom(hPosRange.y[0], hPosRange.y[1]),
@@ -115,19 +105,22 @@ export class ImgFigure extends Component {
 					isCenter: false,
 					isInverse: false
 				}
+				break
 			case 'right':
-				return {
+				arrange = {
 					rotate: this.get30Degrandom(),
 					pos: {
 						top: this.getRangeRandom(hPosRange.y[0], hPosRange.y[1]),
 						left: this.getRangeRandom(hPosRange.rightSecX[0], hPosRange.rightSecX[1])
 					},
 					isCenter: false,
-					isInverse: true
+					isInverse: false
 				}
+				break
 			default:
 				break
 		}
+		this.setState({ arrange })
 	}
 	/**
 	 * 根据props中的stage生成Contant
@@ -135,7 +128,7 @@ export class ImgFigure extends Component {
 	 */
 	genContant(newProps) {
 		// stage 画布节点 size
-		const { stage, data } = newProps
+		const { stage } = newProps
 		// figure 图片节点 size
 		const figure = this.Figure
 		// 计算中心图片的位置点
@@ -148,10 +141,10 @@ export class ImgFigure extends Component {
 		this.Contant.hPosRange = {
 			leftSecX: [-figure.halfWidth, (stage.halfWidth - figure.halfWidth * 3)],
 			rightSecX: [(stage.halfWidth + figure.halfWidth), (stage.Width - figure.halfWidth)],
-			y: [-figure.halfHeight, stage.halfHeight - figure.halfHeight]
+			y: [-figure.halfHeight, stage.Height - figure.halfHeight]
 		}
 
-		// 计算垂直方向位置点 （上册区域））
+		// 计算垂直方向位置点 （上侧区域））
 		this.Contant.vPosRange = {
 			x: [stage.halfWidth - figure.Width, stage.halfWidth],
 			topY: [-figure.halfHeight, (stage.halfHeight - figure.halfHeight * 3)]
@@ -168,17 +161,21 @@ export class ImgFigure extends Component {
 			halfHeight: figureDOM.scrollHeight / 2
 		}
 		this.genContant(this.props)
-		const arrange = this.genArrange(this.props.data)
-		this.setState({ arrange })
+		this.genArrange(this.props.image)
+	}
+	componentWillReceiveProps(nextProps) {
+		this.genArrange(nextProps.image)
 	}
 	render() {
-		const { data, stage } = this.props
-		const { imageURL, title, desc } = data
+		const { image } = this.props
+		// 获取图片基础信息
+		const { imageURL, title, desc } = image
 
 		const { arrange } = this.state
+		// 获取图片排序、旋转、居中 等设置
 		const { pos, rotate, isCenter, isInverse } = arrange
 		let styleObj = {}
-		console.log(pos, rotate, isCenter, isInverse);
+
 		// 判断是否存在布局，有则使用
 		if (pos) {
 			styleObj = pos
@@ -192,21 +189,20 @@ export class ImgFigure extends Component {
 				styleObj[`${pre}Transform`] = `rotate(${rotate}deg)`
 			})
 		}
-
-		// isInverse
-		const className = isInverse ? 'img-figure is-inverse' : 'img-figure'
-
+		// 如果该图片位于居中区域，则添加样式
 		if (isCenter) {
 			styleObj.zIndex = 110
 			styleObj.border = 'solid 1px #ccc'
 		}
+		// isInverse
+		const className = isInverse ? 'img-figure is-inverse' : 'img-figure'
 
 		return (
-			<figure ref="imgFigure" className={className} style={styleObj} onClick={this.onInverse} >
+			<figure ref="imgFigure" className={className} style={styleObj} onClick={this.onHandleClick} >
 				<img src={imageURL} alt={title} />
 				<figcaption>
 					<h2 className="img-title">{title}</h2>
-					<div className="img-back" onClick={this.onInverse}>
+					<div className="img-back" onClick={this.onHandleClick}>
 						<p>{desc}</p>
 					</div>
 				</figcaption>

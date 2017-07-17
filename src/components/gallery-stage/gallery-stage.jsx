@@ -10,6 +10,7 @@ import ReactDOM from 'react-dom'
 
 import './gallery-stage.css'
 import { ImgFigure } from '../img-figure'
+import { ControllerNav, ControllerUnit } from '../controller-nav'
 
 export class GalleryStage extends Component {
 	state = {
@@ -82,14 +83,52 @@ export class GalleryStage extends Component {
 		const images = this.genStageArea(0)
 		this.setState({ stageSize, images })
 	}
+	/**
+     * 翻转图片
+     * @param {number} index 输入当前被执行inverse操作的图片信息数组的index值
+     * @return {function} 闭包函数，一个真正待执行的函数
+     */
+	onInverse = index => {
+		return () => {
+			const { images } = this.state
+			images[index].isInverse = !images[index].isInverse
+
+			this.setState({ images })
+		}
+	}
+	/**
+	 * 利用rearrange 函数，居中对应index的图片
+	 * @param {number} index 需要居中的图片对应的图片信息数组的index值
+	 * @return {function} 闭包函数，一个真正待执行的函数
+	 */
+	onCenter = index => {
+		return () => {
+			const { images } = this.state
+
+			// 获取当前居中图片index
+			const centerIndex = images.findIndex(img => img.area === 'center')
+			// 获取当前图片的现实区域
+			const currentArea = images[index].area
+			// 将当前图片的显示区域赋值给之前居中图片
+			images[centerIndex].area = currentArea
+			// 设置当前图片显示区域为center
+			images[index].area = 'center'
+
+			this.setState({ images })
+		}
+	}
 	render() {
 		const { stageSize, images } = this.state
-		
+
 		// imgfigure 节点集合
 		const imgFigures = []
+		// 控制组件 节点集合
+		const controllerUnits = []
 
+		// 遍历图片集合
 		images.forEach((img, index) => {
-			imgFigures.push(<ImgFigure key={index} data={img} stage={stageSize} />)
+			imgFigures.push(<ImgFigure key={index} onInverse={this.onInverse(index)} onCenter={this.onCenter(index)} image={img} stage={stageSize} />)
+			controllerUnits.push(<ControllerUnit onInverse={this.onInverse(index)} onCenter={this.onCenter(index)} image={img} key={index} />)
 		});
 
 		return (
@@ -97,6 +136,9 @@ export class GalleryStage extends Component {
 				<section className="img-sec">
 					{imgFigures}
 				</section>
+				<ControllerNav>
+					{controllerUnits}
+				</ControllerNav>
 			</section>
 		)
 	}
